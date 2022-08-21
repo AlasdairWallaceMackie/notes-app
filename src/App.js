@@ -23,17 +23,38 @@ export default function App() {
     }
     
     function updateNote(text) {
-        setNotes(oldNotes => oldNotes.map(oldNote => {
-            return oldNote.id === currentNoteId
-                ? { ...oldNote, body: text }
-                : oldNote
-        }))
+        setNotes(function(oldNotes){
+            let currentNoteIndex = 0
+
+            oldNotes = oldNotes.map((oldNote, index) => {
+                if (oldNote.id === currentNoteId){
+                    currentNoteIndex = index
+                    return { ...oldNote, body: text }
+                }
+                else
+                    return oldNote
+            })
+
+            //Place the newly edited note at the top of the list
+            oldNotes.unshift(oldNotes.splice(currentNoteIndex, 1)[0])
+
+            return oldNotes
+        })
     }
     
     function findCurrentNote() {
         return notes.find(note => {
             return note.id === currentNoteId
         }) || notes[0]
+    }
+
+    function deleteNote(noteId, event){
+        console.log("Event: " + event)
+        console.log("DELETING NOTE ID: " + noteId)
+
+        setNotes(prevNotes => prevNotes.filter(
+            note => note.id != noteId
+        ))
     }
 
     React.useEffect(() => localStorage.setItem("notesState", JSON.stringify(notes)), [notes])
@@ -53,6 +74,7 @@ export default function App() {
                     currentNote={findCurrentNote()}
                     setCurrentNoteId={setCurrentNoteId}
                     newNote={createNewNote}
+                    deleteNote={deleteNote}
                 />
                 {
                     currentNoteId && 
