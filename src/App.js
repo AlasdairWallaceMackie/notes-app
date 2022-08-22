@@ -48,9 +48,8 @@ export default function App() {
         }) || notes[0]
     }
 
-    function deleteNote(noteId, event){
-        console.log("Event: " + event)
-        console.log("DELETING NOTE ID: " + noteId)
+    function deleteNote(event, noteId){
+        event.stopPropagation()
 
         setNotes(prevNotes => prevNotes.filter(
             note => note.id != noteId
